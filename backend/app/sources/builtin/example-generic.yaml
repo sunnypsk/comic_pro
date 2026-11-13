@@ -1,0 +1,32 @@
+# Fully declarative source: adjust the selectors to match the site's HTML.
+# Selector syntax:
+#   ".css a"        -> text of the first match
+#   ".css img@src"  -> attribute value of the first match
+#   "regex:<pattern>" -> first capture group found in the block HTML
+#   "meta:og:image" -> <meta property/name="og:image"> content
+id: example-generic
+name: Example Generic Site
+engine: generic
+base_url: https://comics.example.net
+lang: en
+nsfw: false
+enabled: false
+search:
+  url: "/search?q={q}&page={page}"
+  item: "article.comic-card"
+  title: "h2 a"
+  link: "h2 a@href"
+  cover: "img@data-src"
+manga:
+  title: "h1.comic-title"
+  cover: "img.poster@src"
+  description: ".comic-summary"
+  author: ".comic-author"
+  tags: ".tags a"
+  chapters:
+    item: "ul.chapters li"
+    title: "a"
+    link: "a@href"
+chapter:
+  images: [".reader img"]
+  attrs: [data-src, src]

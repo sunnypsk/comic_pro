@@ -1,0 +1,13 @@
+# Example Madara (WordPress manga theme) source.
+# Copy this file into /data/config/sources/ and set base_url to a site you are
+# allowed to read, then enable it on the Settings page.
+id: example-madara
+name: Example Madara Site
+engine: madara
+base_url: https://manga.example.org
+lang: en
+nsfw: false
+enabled: false
+headers:
+  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+  Referer: "https://manga.example.org/"

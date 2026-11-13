@@ -1,0 +1,35 @@
+services:
+  comicpro:
+    image: comicpro:latest
+    build: .
+    container_name: comicpro
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Asia/Shanghai
+      # 2 GiB image cache, 2 chapters downloaded in parallel
+      COMICPRO_CACHE_MAX_GB: 2
+      COMICPRO_DOWNLOAD_CONCURRENCY: 2
+      COMICPRO_CHECK_INTERVAL_MIN: 360
+      # Built-in real sources (Mangapill / Weeb Central) are enabled by default:
+      # COMICPRO_MANGAPILL: 0
+      # COMICPRO_WEEBCENTRAL: 0
+      # COMICPRO_DONGMAN: 0
+      # COMICPRO_NHENTAI: 0
+      # COMICPRO_HTTP_PROXY: http://192.168.1.2:7890
+      # Set a password before exposing the UI outside your LAN:
+      # COMICPRO_AUTH_PASSWORD: change-me
+      # Deploy under a reverse-proxy sub path (proxy must strip the prefix):
+      # COMICPRO_BASE_PATH: /comic
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 25s
+      retries: 3
+    stop_grace_period: 30s

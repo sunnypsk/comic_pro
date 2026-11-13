@@ -1,0 +1,35 @@
+{
+  "result": [
+    {
+      "id": 1,
+      "media_id": "9",
+      "english_title": "Test Gallery One",
+      "japanese_title": "テストギャラリー",
+      "thumbnail": "galleries/9/thumb.jpg",
+      "thumbnail_width": 250,
+      "thumbnail_height": 357,
+      "num_pages": 14,
+      "num_favorites": 120,
+      "tag_ids": [1, 2],
+      "blacklisted": false,
+      "suggestion": null
+    },
+    {
+      "id": 2,
+      "media_id": "10",
+      "english_title": "Test Gallery Two",
+      "japanese_title": null,
+      "thumbnail": "galleries/10/thumb.jpg",
+      "thumbnail_width": 250,
+      "thumbnail_height": 357,
+      "num_pages": 20,
+      "num_favorites": 42,
+      "tag_ids": [],
+      "blacklisted": false,
+      "suggestion": null
+    }
+  ],
+  "num_pages": 2,
+  "per_page": 25,
+  "total": 40
+}

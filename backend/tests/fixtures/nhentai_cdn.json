@@ -1,0 +1,4 @@
+{
+  "image_servers": ["https://i1.example.org"],
+  "thumb_servers": ["https://t1.example.org"]
+}

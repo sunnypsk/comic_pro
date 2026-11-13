@@ -1,0 +1,39 @@
+{
+  "id": 1,
+  "media_id": "9",
+  "title": {
+    "english": "Test Gallery One",
+    "japanese": "テストギャラリー",
+    "pretty": "Test Gallery"
+  },
+  "cover": {"path": "galleries/9/cover.jpg", "width": 350, "height": 500},
+  "thumbnail": {"path": "galleries/9/thumb.jpg", "width": 250, "height": 357},
+  "scanlator": "",
+  "upload_date": 1403964737,
+  "tags": [
+    {"id": 1, "type": "language", "name": "chinese", "slug": "chinese", "url": "/language/chinese/", "count": 10},
+    {"id": 2, "type": "tag", "name": "yuri", "slug": "yuri", "url": "/tag/yuri/", "count": 10}
+  ],
+  "num_pages": 2,
+  "num_favorites": 120,
+  "pages": [
+    {
+      "number": 1,
+      "path": "galleries/9/1.jpg",
+      "width": 1050,
+      "height": 1500,
+      "thumbnail": "galleries/9/1t.jpg",
+      "thumbnail_width": 200,
+      "thumbnail_height": 286
+    },
+    {
+      "number": 2,
+      "path": "galleries/9/2.jpg",
+      "width": 1050,
+      "height": 1500,
+      "thumbnail": "galleries/9/2t.jpg",
+      "thumbnail_width": 200,
+      "thumbnail_height": 286
+    }
+  ]
+}

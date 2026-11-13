@@ -1,0 +1,8 @@
+# Example MangaStream-style source.
+id: example-mangastream
+name: Example MangaStream Site
+engine: mangastream
+base_url: https://reader.example.org
+lang: en
+nsfw: false
+enabled: false
