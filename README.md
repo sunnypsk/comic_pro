@@ -15,10 +15,23 @@
 
 ## 快速开始
 
+从 [GHCR](https://github.com/sunnypsk/comic_pro/pkgs/container/comic_pro) 拉取公开镜像，无需 GitHub 登录或在 NAS 上构建：
+
 ```bash
-git clone <this-repo> comicpro && cd comicpro
-docker compose up -d --build
+docker run -d --name comicpro --restart unless-stopped \
+  -p 8080:8080 -e PUID=99 -e PGID=100 -e TZ=Asia/Hong_Kong \
+  -v /mnt/user/appdata/comicpro/data:/data \
+  ghcr.io/sunnypsk/comic_pro:latest
 # 打开 http://NAS-IP:8080
+```
+
+也可使用仓库中的 `docker-compose.unraid.yml`：`docker compose -f docker-compose.unraid.yml up -d`。`latest` 跟随通过 CI 的 `master`；需要固定版本时，使用 `sha-<完整 commit SHA>` 标签或镜像 digest。镜像包含 `linux/amd64` 和 `linux/arm64`。
+
+从源码构建：
+
+```bash
+git clone https://github.com/sunnypsk/comic_pro.git && cd comic_pro
+docker compose up -d --build
 ```
 
 `./data` 会自动创建，包含数据库、书架、缓存与源配置。更新代码后重新 `docker compose up -d --build` 即可，数据不受影响。
@@ -145,6 +158,8 @@ location /comic/ {
 同时设置 `COMICPRO_BASE_PATH=/comic`，前端资源、路由、Cookie 路径都会自动适配。
 
 ## 本地开发
+
+GitHub Actions 会先扫描 Git 历史中的 secrets，执行 backend lint/tests、frontend typecheck/build，再以 Unraid 的 `PUID=99` / `PGID=100` 验证 Docker 启动、离线阅读、下载和重启持久化。全部通过后，`master` 或 `v*` 标签的 push 才会发布到 GHCR；pull request 只验证，不发布。发布仅使用 GitHub 自动生成的 `GITHUB_TOKEN`，无需保存个人 token。
 
 需要 Python 3.11+、Node 20+、[uv](https://docs.astral.sh/uv/)、pnpm。
 

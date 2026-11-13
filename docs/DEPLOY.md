@@ -58,10 +58,28 @@ docker compose logs -f
 
 ## Unraid
 
-1. 在 `/mnt/user/appdata/comicpro` 放 `docker-compose.yml`（或用 Compose Manager 插件）。
-2. `PUID=99`、`PGID=100`（Unraid 默认 `nobody:users`）。
-3. 端口映射 `8080 → 8080`，路径映射 `/mnt/user/appdata/comicpro/data → /data`。
-4. 若用 Unraid 模板：容器路径 `/data`、网络 Bridge、重启策略 `unless-stopped` 即可，其余靠环境变量。
+在 Docker 页点击 **Add Container**，填写：
+
+| 设置 | 值 |
+| --- | --- |
+| Name | `comicpro` |
+| Repository | `ghcr.io/sunnypsk/comic_pro:latest` |
+| Network Type | `Bridge` |
+| WebUI | `http://[IP]:[PORT:8080]` |
+| Container Port / Host Port | `8080` / `8080`（Host Port 可自行更改） |
+| Container Path / Host Path | `/data` / `/mnt/user/appdata/comicpro/data` |
+| Environment | `PUID=99`、`PGID=100`、`TZ=Asia/Hong_Kong` |
+
+镜像公开后无需 `docker login`。访问 `http://NAS-IP:8080`；需要访问密码时，添加 `COMICPRO_AUTH_PASSWORD` 环境变量，值只保存在 NAS 的容器设置中。
+
+使用 Compose Manager 时，可以直接使用仓库中的 `docker-compose.unraid.yml`。更新只需拉取和重建容器，保留原 `/data` 映射：
+
+```bash
+docker compose -f docker-compose.unraid.yml pull
+docker compose -f docker-compose.unraid.yml up -d
+```
+
+`latest` 跟随通过 CI 的 `master`，`sha-<完整 commit SHA>` 可固定版本；`v1.2.3` 格式的 Git 标签会生成 `1.2.3` 和 `1.2` 镜像标签。GHCR 的 package visibility 与 repository 独立；首次发布后，需要在 package settings 中设为 Public，才能匿名拉取。
 
 ## TrueNAS SCALE
 

@@ -22,6 +22,15 @@ backend/tests/.data/
 
 # env / editor
 .env
+.env.*
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+*service-account*.json
 .DS_Store
 .idea/
 .vscode/

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # ---------- stage 1: build the React frontend ----------
-FROM node:24-bookworm-slim AS web
+FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS web
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH

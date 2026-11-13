@@ -1,0 +1,16 @@
+services:
+  comicpro:
+    image: ghcr.io/sunnypsk/comic_pro:latest
+    container_name: comicpro
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PUID: 99
+      PGID: 100
+      TZ: Asia/Hong_Kong
+      COMICPRO_CACHE_MAX_GB: 2
+      COMICPRO_AUTH_PASSWORD: ${COMICPRO_AUTH_PASSWORD:-}
+    volumes:
+      - /mnt/user/appdata/comicpro/data:/data
+    stop_grace_period: 30s
