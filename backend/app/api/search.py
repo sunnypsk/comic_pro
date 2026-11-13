@@ -18,7 +18,7 @@ async def search(
     ids = [item.strip() for item in sources.split(",") if item.strip()]
     query = q.strip()
     if not query:
-        return {"query": "", "page": page, "sources": []}
+        return {"query": "", "page": page, "sources": [], "aliases": []}
 
     payload = await registry.search(query, page=page, ids=ids or None)
     proxy = request.app.state.image_proxy

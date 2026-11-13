@@ -14,6 +14,7 @@ async def _app_with(tmp_path, **kwargs):
         secret_key="auth-test-secret",
         check_interval_min=0,
         source_min_interval=0.0,
+        bangumi_enabled=False,
         log_level="WARNING",
         **kwargs,
     )

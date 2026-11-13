@@ -5,6 +5,7 @@ import secrets
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -34,6 +35,10 @@ class Settings(BaseSettings):
     source_timeout: float = 8.0
     search_timeout: float = 12.0
     source_min_interval: float = 0.25
+    # Optional cross-language title lookup (Bangumi public metadata API).
+    bangumi_enabled: bool = True
+    bangumi_timeout: float = Field(default=2.0, gt=0, le=10)
+    bangumi_cache_ttl: int = Field(default=86400, ge=60)
     user_agent: str = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"

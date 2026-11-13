@@ -24,7 +24,7 @@ export default function Search() {
       <header>
         <h1 className="text-2xl font-bold">在线搜索</h1>
         <p className="mt-1 text-sm text-slate-400">
-          一次请求并发到全部启用的漫画源，单源超时不会影响其它结果。
+          支持通过作品的中、英、日文名称搜索，单源超时不会影响其它结果。
         </p>
       </header>
 
@@ -40,6 +40,12 @@ export default function Search() {
           搜索
         </button>
       </form>
+
+      {query && search.data?.aliases && search.data.aliases.length > 0 && (
+        <p className="text-sm text-slate-400">
+          已识别作品别名：{search.data.aliases.join(" · ")}
+        </p>
+      )}
 
       {!query && (
         <div className="space-y-4">

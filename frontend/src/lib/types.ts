@@ -37,6 +37,7 @@ export interface SearchResponse {
   query: string;
   page: number;
   sources: SearchOutcome[];
+  aliases?: string[];
 }
 
 export interface Chapter {

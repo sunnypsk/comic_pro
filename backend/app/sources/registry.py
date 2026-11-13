@@ -9,6 +9,7 @@ import httpx
 import yaml
 
 from ..config import Settings
+from ..services.bangumi import BangumiTitles, source_queries
 from ..services.http_client import SourceError, SourceHTTP
 from .base import SearchPage, Source
 from .demo import DemoSource
@@ -31,6 +32,10 @@ class SourceRegistry:
         self.errors: dict[str, str] = {}
         self.last_error: dict[str, str] = {}
         self.last_ok: dict[str, float] = {}
+        self.titles = BangumiTitles(
+            client, timeout=min(settings.bangumi_timeout, settings.search_timeout),
+            ttl=settings.bangumi_cache_ttl, version=settings.version,
+        )
 
     # --------------------------------------------------------------- lifecycle
     def load(self, state: dict[str, bool] | None = None) -> dict[str, str]:
@@ -120,12 +125,38 @@ class SourceRegistry:
             for source_id, source in self.sources.items()
             if self.enabled.get(source_id) and (not ids or source_id in ids)
         ]
+        lookup = None
+        if self.settings.bangumi_enabled and any(source.id != "demo" for source in selected):
+            lookup = asyncio.create_task(self.titles.resolve(query))
 
         async def run(source: Source) -> dict[str, Any]:
             started = time.monotonic()
             timeout = min(self.settings.source_timeout + 2, self.settings.search_timeout)
+            deadline = started + timeout
+
+            async def fetch(term: str) -> SearchPage:
+                return await asyncio.wait_for(source.search(term, page), timeout=max(0, deadline - time.monotonic()))
+
+            # Original searches start immediately, alongside optional title lookup.
+            primary = asyncio.create_task(fetch(query))
             try:
-                result = await asyncio.wait_for(source.search(query, page), timeout=timeout)
+                aliases = await lookup if lookup is not None and source.id != "demo" else []
+                queries = source_queries(query, aliases, source.lang) if source.id != "demo" else [query]
+                results = await asyncio.gather(
+                    primary, *(fetch(term) for term in queries[1:]),
+                    return_exceptions=True,
+                )
+                pages = [result for result in results if isinstance(result, SearchPage)]
+                if not pages:
+                    raise results[0]
+                # Original-query results come first and win duplicate keys.
+                items = {}
+                for result in pages:
+                    for item in result.items:
+                        items.setdefault(item.key, item)
+                result = SearchPage(
+                    items=list(items.values()), page=page, has_next=any(result.has_next for result in pages)
+                )
                 self.last_ok[source.id] = time.time()
                 self.last_error.pop(source.id, None)
                 return self._outcome(source, result, started, "ok")
@@ -138,10 +169,21 @@ class SourceRegistry:
             except Exception as exc:  # noqa: BLE001
                 self.last_error[source.id] = f"{type(exc).__name__}: {exc}"
                 return self._outcome(source, SearchPage(items=[]), started, "error", str(exc))
+            finally:
+                if not primary.done():
+                    primary.cancel()
+                await asyncio.gather(primary, return_exceptions=True)
 
-        outcomes = await asyncio.gather(*(run(source) for source in selected))
+        try:
+            outcomes = await asyncio.gather(*(run(source) for source in selected))
+            aliases = lookup.result() if lookup is not None else []
+        finally:
+            if lookup is not None:
+                if not lookup.done():
+                    lookup.cancel()
+                await asyncio.gather(lookup, return_exceptions=True)
         outcomes.sort(key=lambda item: (item["id"] != "demo", item["source_name"].lower()))
-        return {"query": query, "page": page, "sources": outcomes}
+        return {"query": query, "page": page, "sources": outcomes, "aliases": aliases}
 
     @staticmethod
     def _outcome(
